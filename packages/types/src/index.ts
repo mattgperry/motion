@@ -158,6 +158,7 @@ export type UnresolvedValueKeyframe = ValueKeyframe | null
 
 export type Easing =
   | "linear"
+  | `linear(${string})`
   | "ease"
   | "ease-in"
   | "ease-out"
@@ -165,6 +166,7 @@ export type Easing =
   | "step-start"
   | "step-end"
   | `steps(${number}, ${"start" | "end"})`
+  | `cubic-bezier(${string})`
   | BezierDefinition
 
 export type EasingGenerator = {
