@@ -116,7 +116,8 @@ export function createMotionState(
       if (!activeStates[name as keyof typeof activeStates]) continue
 
       const variant = resolveVariant(
-        options[name as keyof typeof options] as any
+        options[name as keyof typeof options] as any,
+        options.variants
       )
 
       if (!variant) continue
