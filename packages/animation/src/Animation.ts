@@ -76,6 +76,8 @@ export class Animation implements Omit<AnimationControls, "stop" | "duration"> {
     )
 
     this.tick = (timestamp: number) => {
+      this.frameRequestId = undefined
+
       // TODO: Temporary fix for OptionsResolver typing
       delay = delay as number
 
@@ -157,7 +159,7 @@ export class Animation implements Omit<AnimationControls, "stop" | "duration"> {
         this.playState = "finished"
         this.resolve?.(latest)
       } else if (this.playState !== "idle") {
-        this.frameRequestId = requestAnimationFrame(this.tick)
+        this.requestAnimationFrame()
       }
     }
 
@@ -181,7 +183,7 @@ export class Animation implements Omit<AnimationControls, "stop" | "duration"> {
 
     this.cancelTimestamp = this.startTime
     this.pauseTime = undefined
-    this.frameRequestId = requestAnimationFrame(this.tick)
+    this.requestAnimationFrame()
   }
 
   pause() {
@@ -197,9 +199,7 @@ export class Animation implements Omit<AnimationControls, "stop" | "duration"> {
   stop() {
     this.playState = "idle"
 
-    if (this.frameRequestId !== undefined) {
-      cancelAnimationFrame(this.frameRequestId)
-    }
+    this.cancelAnimationFrame()
 
     this.reject?.(false)
   }
@@ -238,5 +238,18 @@ export class Animation implements Omit<AnimationControls, "stop" | "duration"> {
 
   set playbackRate(rate) {
     this.rate = rate
+  }
+
+  private requestAnimationFrame() {
+    if (this.frameRequestId === undefined) {
+      this.frameRequestId = requestAnimationFrame(this.tick)
+    }
+  }
+
+  private cancelAnimationFrame() {
+    if (this.frameRequestId !== undefined) {
+      cancelAnimationFrame(this.frameRequestId)
+      this.frameRequestId = undefined
+    }
   }
 }
